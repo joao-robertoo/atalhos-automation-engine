@@ -39,3 +39,22 @@ export interface ApiError {
   error: string;
   details?: string;
 }
+
+/** Tipos de erro que a API externa simulada pode retornar. */
+export type ExternalApiErrorType = "SERVER_ERROR" | "RATE_LIMITED";
+
+/** Resultado de sucesso de uma chamada à API externa simulada. */
+export interface AutomationSuccess {
+  ok: true;
+  durationMs: number;
+}
+
+/** Resultado de falha de uma chamada à API externa simulada. */
+export interface AutomationFailure {
+  ok: false;
+  errorType: ExternalApiErrorType;
+  durationMs: number;
+}
+
+/** União discriminada: o campo `ok` deixa o TypeScript inferir qual dos dois é. */
+export type AutomationResult = AutomationSuccess | AutomationFailure;

@@ -1,6 +1,7 @@
 import { Router, Request, Response } from "express";
 import prisma from "../db/prisma";
 import { CreateCandidateInput, ApiError } from "../types/candidate";
+import { runAutomation } from "../automation/engine";
 
 const router = Router();
 
@@ -45,6 +46,12 @@ router.post("/", async (req: Request, res: Response): Promise<void> => {
       },
     });
 
+    // Dispara a automação em background — fire-and-forget.
+    // Sem "await": a resposta HTTP não espera a automação terminar.
+    runAutomation(candidate.id).catch((err: unknown) => {
+      console.error(`[POST /candidates] Erro ao disparar automação:`, err);
+    });
+
     res.status(201).json(candidate);
   } catch (err) {
     // Prisma lança P2002 quando há violação de unique constraint (email duplicado)
@@ -76,6 +83,51 @@ router.get("/", async (_req: Request, res: Response): Promise<void> => {
     res.status(200).json(candidates);
   } catch (err) {
     console.error("[GET /candidates] Erro inesperado:", err);
+    const errorBody: ApiError = { error: "Erro interno do servidor" };
+    res.status(500).json(errorBody);
+  }
+});
+
+// ─────────────────────────────────────────────
+// POST /candidates/:id/retry
+// Força reprocessamento manual de uma automação que falhou
+// ─────────────────────────────────────────────
+router.post("/:id/retry", async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { id } = req.params;
+
+    const candidate = await prisma.candidate.findUnique({ where: { id } });
+
+    if (!candidate) {
+      const errorBody: ApiError = { error: "Candidato não encontrado" };
+      res.status(404).json(errorBody);
+      return;
+    }
+
+    // Só permite reprocessar quem está em estado terminal de falha.
+    // Evita duas execuções de runAutomation rodando ao mesmo tempo
+    // para o mesmo candidato (condição de corrida).
+    if (candidate.status !== "FALHA") {
+      const errorBody: ApiError = {
+        error: "Reprocessamento não permitido",
+        details: `Só é possível reprocessar candidatos com status FALHA. Status atual: ${candidate.status}`,
+      };
+      res.status(400).json(errorBody);
+      return;
+    }
+
+    await prisma.candidate.update({
+      where: { id },
+      data: { attempts: 0, status: "PENDENTE" },
+    });
+
+    runAutomation(id, 0).catch((err: unknown) => {
+      console.error(`[POST /candidates/:id/retry] Erro ao disparar automação:`, err);
+    });
+
+    res.status(202).json({ message: "Reprocessamento iniciado" });
+  } catch (err) {
+    console.error("[POST /candidates/:id/retry] Erro inesperado:", err);
     const errorBody: ApiError = { error: "Erro interno do servidor" };
     res.status(500).json(errorBody);
   }
