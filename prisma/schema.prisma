@@ -1,0 +1,31 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+/// Candidato cadastrado no sistema — ponto de entrada de toda automação futura
+model Candidate {
+  id        String   @id @default(cuid())
+  nome      String
+  email     String   @unique
+  cargo     String
+  linkedin  String?
+
+  /// Status atual da automação: PENDENTE | PROCESSANDO | SUCESSO | FALHA
+  /// (String em vez de enum — SQLite não suporta o tipo enum do Prisma)
+  status    String   @default("PENDENTE")
+
+  attempts  Int      @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("candidates")
+}
