@@ -42,7 +42,8 @@ Este projeto resolve esse problema com uma **engine de automação resiliente**:
   👉 SUBSTITUA esta linha pelo GIF real da aplicação rodando.
   Veja a seção "Como gravar o GIF de demonstração" no final deste README.
 -->
-<img src="./docs/demo.gif" alt="Demonstração do sistema em funcionamento" width="800" />
+
+<img width="1024" height="660" alt="Image" src="https://github.com/user-attachments/assets/83e1efa0-15c0-4c66-beb5-e1f99746b764" />
 
 </div>
 
