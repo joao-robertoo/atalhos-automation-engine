@@ -26,11 +26,11 @@
 
 ## 📖 Sobre o projeto
 
-No ecossistema do **Grupo Atalhos**, a captação de candidatos depende de automações externas — notificações, integrações e disparos que, na vida real, **falham**. APIs de terceiros ficam instáveis, sofrem limite de requisições (`429`) ou erram (`500`) sem aviso prévio.
+No ecossistema do **Grupo Atalhos**, a captação de candidatos depende de automações externas, notificações, integrações e disparos que, na vida real, **falham**. APIs de terceiros ficam instáveis, sofrem limite de requisições (`429`) ou erram (`500`) sem aviso prévio.
 
-Este projeto resolve esse problema com uma **engine de automação resiliente**: nenhum dado é perdido, toda falha é tratada, e o sistema tenta novamente sozinho — com inteligência, não com força bruta.
+Este projeto resolve esse problema com uma **engine de automação resiliente**: nenhum dado é perdido, toda falha é tratada, e o sistema tenta novamente sozinho com inteligência, não com força bruta.
 
-> Cadastre um candidato. O sistema dispara a automação em segundo plano, sem travar sua resposta. Se falhar, ele tenta de novo — automaticamente, com intervalos crescentes. Se esgotar as tentativas, você pode reprocessar manualmente com um clique.
+> Cadastre um candidato. O sistema dispara a automação em segundo plano, sem travar sua resposta. Se falhar, ele tenta de novo automaticamente, com intervalos crescentes. Se esgotar as tentativas, você pode reprocessar manualmente com um clique.
 
 <br />
 
@@ -50,7 +50,7 @@ Este projeto resolve esse problema com uma **engine de automação resiliente**:
 
 ## 🧠 O problema, explicado
 
-APIs externas instáveis são o pesadelo de qualquer engenheiro. O desafio real não é "chamar uma API" — é **chamar uma API que não é confiável** e ainda assim entregar uma experiência confiável para quem usa o sistema.
+APIs externas instáveis são o pesadelo de qualquer engenheiro. O desafio real não é "chamar uma API" é **chamar uma API que não é confiável** e ainda assim entregar uma experiência confiável para quem usa o sistema.
 
 Este projeto resolve isso com três decisões de arquitetura centrais:
 
@@ -58,7 +58,7 @@ Este projeto resolve isso com três decisões de arquitetura centrais:
 |---|---|
 | **Resposta HTTP nunca espera a automação** | O `POST /candidates` responde imediatamente após salvar no banco. A automação roda em *fire-and-forget*, desacoplada do ciclo de requisição/resposta. |
 | **Retry com backoff exponencial** | Ao invés de tentar de novo instantaneamente (o que sobrecarregaria ainda mais uma API já instável), cada nova tentativa espera o dobro da anterior: `2s → 4s → 8s`. |
-| **Nenhum dado é perdido** | Todo estado intermediário (`PENDENTE`, `PROCESSANDO`, `SUCESSO`, `FALHA`) e o número de tentativas ficam persistidos no banco a cada mudança — nunca só em memória. |
+| **Nenhum dado é perdido** | Todo estado intermediário (`PENDENTE`, `PROCESSANDO`, `SUCESSO`, `FALHA`) e o número de tentativas ficam persistidos no banco a cada mudança nunca só em memória. |
 
 <br />
 
@@ -131,12 +131,12 @@ sequenceDiagram
 ## ✨ Funcionalidades
 
 - ✅ **Cadastro de candidatos** com validação client-side e server-side (nome, e-mail, cargo obrigatórios; LinkedIn opcional)
-- ✅ **Disparo assíncrono de automação** — a resposta HTTP nunca fica presa esperando a automação externa
+- ✅ **Disparo assíncrono de automação** a resposta HTTP nunca fica presa esperando a automação externa
 - ✅ **Retry automático com backoff exponencial** (2s → 4s → 8s), até 3 tentativas
-- ✅ **Simulação realista de instabilidade** — ~60% de taxa de falha, alternando entre `SERVER_ERROR (500)` e `RATE_LIMITED (429)`
-- ✅ **Dashboard em tempo real** com polling a cada 3 segundos — sem necessidade de recarregar a página
+- ✅ **Simulação realista de instabilidade** ~60% de taxa de falha, alternando entre `SERVER_ERROR (500)` e `RATE_LIMITED (429)`
+- ✅ **Dashboard em tempo real** com polling a cada 3 segundos sem necessidade de recarregar a página
 - ✅ **Reprocessamento manual** de candidatos que esgotaram as tentativas automáticas
-- ✅ **Tratamento de erros end-to-end** — 400 (validação), 404 (não encontrado), 409 (e-mail duplicado), 500 (erro interno) — sempre com mensagens claras
+- ✅ **Tratamento de erros end-to-end** — 400 (validação), 404 (não encontrado), 409 (e-mail duplicado), 500 (erro interno) sempre com mensagens claras
 - ✅ **100% tipado**, zero uso de `any` em toda a base de código
 
 <br />
@@ -188,7 +188,7 @@ cd atalhos-automation-engine
 # Instalar dependências
 npm install
 
-# Variáveis de ambiente (já incluído como exemplo — SQLite não exige configuração externa)
+# Variáveis de ambiente (já incluído como exemplo SQLite não exige configuração externa)
 # DATABASE_URL="file:./dev.db"  →  já está em prisma/.env
 
 # Gerar o cliente Prisma e criar o banco local
@@ -300,7 +300,7 @@ Para evitar uma condição de corrida: se fosse permitido reprocessar um candida
 <summary><strong>Por que polling (3s) em vez de WebSocket para tempo real?</strong></summary>
 <br/>
 
-Para o escopo deste desafio, polling oferece a mesma percepção de "tempo real" para quem usa o sistema, com uma fração da complexidade de implementação e sem introduzir gerenciamento de conexões persistentes. É a opção correta para o tamanho do problema — WebSocket seria over-engineering aqui.
+Para o escopo deste desafio, polling oferece a mesma percepção de "tempo real" para quem usa o sistema, com uma fração da complexidade de implementação e sem introduzir gerenciamento de conexões persistentes. É a opção correta para o tamanho do problema WebSocket seria over-engineering aqui.
 </details>
 
 <br />
@@ -318,7 +318,7 @@ Para o escopo deste desafio, polling oferece a mesma percepção de "tempo real"
 ## 👤 Autor
 
 **João Roberto**
-Desafio técnico desenvolvido para o processo seletivo de Desenvolvedor(a) Full Stack Jr/Pl — Grupo Atalhos
+Desafio técnico desenvolvido para o processo seletivo de Desenvolvedor(a) Full Stack Jr/Pl Grupo Atalhos
 
 <p>
   <a href="https://www.linkedin.com/in/joaoroberto">
@@ -334,5 +334,5 @@ Desafio técnico desenvolvido para o processo seletivo de Desenvolvedor(a) Full 
 ---
 
 <div align="center">
-<sub>Construído com atenção a cada detalhe de resiliência — porque sistemas confiáveis nascem assumindo que tudo vai dar errado, e se preparando para quando isso acontecer.</sub>
+<sub>Construído com atenção a cada detalhe de resiliência porque sistemas confiáveis nascem assumindo que tudo vai dar errado, e se preparando para quando isso acontecer.</sub>
 </div>
