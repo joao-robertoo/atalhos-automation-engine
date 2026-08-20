@@ -1,4 +1,4 @@
-import { useState, type FormEvent, type ChangeEvent } from "react";
+import { useState, useEffect, type FormEvent, type ChangeEvent } from "react";
 import { createCandidate, extractApiError } from "../api/client";
 import type { CreateCandidatePayload } from "../types/candidate";
 import "./CandidateForm.css";
@@ -51,6 +51,16 @@ export function CandidateForm({ onCreated }: CandidateFormProps) {
   const [apiError, setApiError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  // Some as mensagens de feedback (erro ou sucesso) sozinhas após 5 segundos
+  useEffect(() => {
+    if (!apiError && !success) return;
+    const timer = setTimeout(() => {
+      setApiError(null);
+      setSuccess(false);
+    }, 5000);
+    return () => clearTimeout(timer);
+  }, [apiError, success]);
 
   function handleChange(e: ChangeEvent<HTMLInputElement>) {
     const { name, value } = e.target;

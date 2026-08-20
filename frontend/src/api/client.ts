@@ -14,7 +14,7 @@ import type {
 const http = axios.create({
   baseURL: "/api",
   headers: { "Content-Type": "application/json" },
-  timeout: 10_000,
+  timeout: 30_000,
 });
 
 // ─── Helper de erro ───────────────────────────────────────────────────────────
