@@ -1,8 +1,10 @@
+import cors from "cors";
 import express, { Application, Request, Response, NextFunction } from "express";
 import candidatesRouter from "./routes/candidates";
 import { ApiError } from "./types/candidate";
 
 const app: Application = express();
+app.use(cors());
 const PORT = process.env.PORT ?? 3000;
 
 // ─── Middlewares globais ─────────────────────────────────────────────────────
